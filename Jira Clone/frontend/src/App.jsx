@@ -5,6 +5,12 @@ import Signup from "./pageComponent/signupComponent/Signup";
 import Login from "./pageComponent/LoginComponent/Login";
 import { isAuthenticated } from "./utils/auth";
 import Home from "./pageComponent/Home";
+import ProfileSettings from "./pageComponent/profileSetting";
+import Dashboard from "./pageComponent/Home/Dashboard";
+import ProjectDetailPage from "./pageComponent/Home/Project1/ProjectDetail";
+import Task from "./pageComponent/Home/Task";
+import Project from "./pageComponent/Home/project";
+import Tasks from "./pageComponent/Home/tasks";
 
 function App() {
   return (
@@ -16,14 +22,21 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/home" element={<Home />} />
+          {/* <Route path="/home" element={<Home />} /> */}
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/setting" element={<ProfileSettings />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects" element={<Project />} />
+          <Route path="/projects/:id/" element={<ProjectDetailPage />} />{" "}
+          {/* ← dynamic route */}
+          <Route path="/tasks" element={<Tasks />} />
         </Route>
 
         <Route
           path="*"
           element={
             isAuthenticated() ? (
-              <Navigate to="/home" replace element={<Home />} />
+              <Navigate to="/" replace element={<Navigate to="/dashboard" />} />
             ) : (
               <Navigate to="/login" replace />
             )

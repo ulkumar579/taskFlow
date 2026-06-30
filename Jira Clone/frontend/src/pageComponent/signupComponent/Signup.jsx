@@ -4,8 +4,8 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation } from "react-router-dom";
 import "../../styles/loginpage.css";
-import GoogleSvg from "../googleSvg";
-import Logo from "../logoSvg";
+import GoogleSvg from "../LoginComponent/googleSvg";
+import Logo from "../LoginComponent/logoSvg";
 import { Controller, useForm } from "react-hook-form";
 const Signup = () => {
   const location = useLocation();

@@ -14,6 +14,35 @@ const getProject = async (req, res) => {
   });
 };
 
+
+const getProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    const result = await pool.query(
+      `SELECT * FROM projects WHERE id = $1`,
+      [id],
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 const createProject = async (req, res) => {
   try {
     const { name, description, color, memberIds } = req.body;
@@ -61,4 +90,4 @@ const getProjectMembers = async (req, res) => {
   });
 };
 
-module.exports = { getProject, createProject };
+module.exports = { getProject, createProject, getProjectById };

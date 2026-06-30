@@ -4,8 +4,8 @@ import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../styles/loginpage.css";
-import GoogleSvg from "../googleSvg";
-import Logo from "../logoSvg";
+import GoogleSvg from "./googleSvg";
+import Logo from "./logoSvg";
 import { useEffect } from "react";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
@@ -139,7 +139,7 @@ const Login = () => {
 
           <div className="forgotAndSignup flex flex-col gap-5">
             {route === "/login" ? (
-              <p className="m-auto text-[14px]">Forgot passworhhhhd?</p>
+              <p className="m-auto text-[14px]">Forgot password?</p>
             ) : (
               <p>this is other</p>
             )}

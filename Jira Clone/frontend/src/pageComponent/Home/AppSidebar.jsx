@@ -1,13 +1,3 @@
-// import {
-//   Sidebar,
-//   SidebarContent,
-//   SidebarFooter,
-//   SidebarGroup,
-//   SidebarHeader,
-//   SidebarMenu,
-//   SidebarMenuItem,
-//   SidebarMenuButton,
-// } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -17,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Logo from "../logoSvg";
+import Logo from "../LoginComponent/logoSvg";
 import {
   Sidebar,
   SidebarContent,
@@ -29,8 +19,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-// This is sample data.
+} from "@/components/ui/sidebar";
+
 const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
@@ -49,8 +39,7 @@ const data = {
       ],
     },
   ],
-}
-
+};
 
 export function AppSidebar() {
   return (
@@ -61,25 +50,6 @@ export function AppSidebar() {
           <p className="text-2xl font-medium">TaskFlow</p>
         </div>
         <Separator />
-        {/* <SidebarMenu>
-          <Tabs
-            defaultValue="dashboard"
-            orientation="vertical"
-            className="w-full"
-          >
-            <TabsList
-              className="w-full bg-transparent"
-              defaultValue="dashboard"
-              activateOnFocus={false}
-            >
-              <TabsTrigger className="" value="dashboard">
-                Dashboard
-              </TabsTrigger>
-              <TabsTrigger value="tasks">Tasks</TabsTrigger>
-              <TabsTrigger value="projects">Projects</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </SidebarMenu> */}
       </SidebarHeader>
       <SidebarContent>
         {/* We create a SidebarGroup for each parent. */}

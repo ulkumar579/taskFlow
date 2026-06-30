@@ -8,82 +8,45 @@ import {
   Search,
   Settings,
   LogOut,
-  User,
   Moon,
   Sun,
   Menu,
   X,
 } from "lucide-react";
-import Dashboard from "../Home/Dashboard";
-import Project from "../Home/Project";
-import Task from "../Home/Task";
-import ProjectDetail from "../Home/Project/ProjectDetail";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("dashboard");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false); 
   const [notifications] = useState(3);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "projects", label: "Projects", icon: FolderKanban },
-    { id: "tasks", label: "My Tasks", icon: ListTodo },
+    { id: "dashboard", label: "Home", icon: LayoutDashboard, path: "/dashboard" },
+    { id: "projects", label: "Projects", icon: FolderKanban, path: "/projects" },
+    { id: "tasks", label: "Tasks", icon: ListTodo, path: "/tasks" },
   ];
 
   // Mock search data
   const mockSearchData = [
-    {
-      id: 1,
-      type: "project",
-      title: "Website Redesign",
-      subtitle: "Design Team",
-    },
-    {
-      id: 2,
-      type: "project",
-      title: "Mobile App Development",
-      subtitle: "Development Team",
-    },
-    {
-      id: 3,
-      type: "task",
-      title: "Fix authentication bug",
-      subtitle: "In Progress • High Priority",
-    },
-    {
-      id: 4,
-      type: "task",
-      title: "Design hero section",
-      subtitle: "To Do • Design",
-    },
-    {
-      id: 5,
-      type: "task",
-      title: "Implement dashboard",
-      subtitle: "In Progress • Development",
-    },
-    {
-      id: 6,
-      type: "project",
-      title: "Marketing Campaign",
-      subtitle: "Marketing Team",
-    },
+    { id: 1, type: "project", title: "Website Redesign", subtitle: "Design Team" },
+    { id: 2, type: "project", title: "Mobile App Development", subtitle: "Development Team" },
+    { id: 3, type: "task", title: "Fix authentication bug", subtitle: "In Progress • High Priority" },
   ];
 
-  // Handle search
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query.trim().length > 0) {
       const filtered = mockSearchData.filter(
         (item) =>
           item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.subtitle.toLowerCase().includes(query.toLowerCase()),
+          item.subtitle.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(filtered);
       setIsSearchOpen(true);
@@ -94,332 +57,201 @@ export default function Navbar() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navbar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className=" mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo & Brand */}
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 hidden sm:block">
-                  TaskFlow
-                </span>
-              </div>
-
-              {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-1">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTab(item.id)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-black text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+    // Outer wrapper positions the floating pill
+    <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      
+      {/* Light Glassmorphic Navbar */}
+      <nav className="pointer-events-auto relative w-full max-w-6xl bg-white/80 backdrop-blur-xl border border-gray-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-full px-4 sm:px-6 py-2.5 flex items-center justify-between transition-all">
+        
+        {/* Left: Logo & Brand */}
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="relative flex items-center justify-center w-8 h-8">
+            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-pink-400 rounded-full blur-[6px] opacity-60"></div>
+            <div className="relative w-full h-full bg-gradient-to-tr from-cyan-400 to-pink-400 rounded-full border border-white flex items-center justify-center shadow-sm">
+              <CheckCircle2 className="w-5 h-5 text-white" />
             </div>
+          </div>
+          <span className="text-xl font-bold text-gray-800 hidden sm:block tracking-tight">
+            TaskFlow
+          </span>
+        </div>
 
-            {/* Right Side Actions */}
-            <div className="flex items-center gap-3">
-              {/* Search Bar - Desktop */}
-              <div className="hidden lg:block relative">
-                <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search projects, tasks..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  onFocus={() => searchQuery && setIsSearchOpen(true)}
-                  className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                />
+        {/* Center: Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-1 absolute left-1/3 -translate-x-1/2 bg-gray-50/80 border border-gray-100 rounded-full p-1 shadow-inner ">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname.startsWith(item.path);
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  navigate(item.path);
+                }}
+                className={`px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 group ${
+                  isActive
+                    ? "bg-white text-blue-600 shadow-md border border-gray-200/50"
+                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/50"
+                }`}
+              >
+                <Icon className={`w-4 h-4 transition-transform duration-300 ${isActive ? "scale-100" : "scale-90 group-hover:scale-100"}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-                {/* Search Results Dropdown */}
-                {isSearchOpen && searchResults.length > 0 && (
-                  <>
-                    {/* Backdrop to close dropdown */}
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsSearchOpen(false)}
-                    />
+        {/* Right: Actions & Profile */}
+        <div className="flex items-center gap-3 lg:gap-4 relative z-10">
+          
+          {/* Search Bar - Desktop */}
+          <div className="hidden xl:block relative">
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery && setIsSearchOpen(true)}
+              className="pl-9 pr-4 py-2 w-48 xl:w-60 bg-gray-50 border border-gray-200 rounded-full text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all shadow-inner"
+            />
 
-                    {/* Results */}
-                    <div className="absolute top-full mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-20 max-h-96 overflow-y-auto">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-xs font-medium text-gray-500 uppercase">
-                          {searchResults.length} Results
-                        </p>
-                      </div>
-
-                      {searchResults.map((result) => (
-                        <button
-                          key={result.id}
-                          onClick={() => {
-                            setIsSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="w-full flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition group"
-                        >
-                          <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              result.type === "project"
-                                ? "bg-blue-100 group-hover:bg-blue-200"
-                                : "bg-purple-100 group-hover:bg-purple-200"
-                            }`}
-                          >
-                            {result.type === "project" ? (
-                              <FolderKanban
-                                className={`w-4 h-4 ${
-                                  result.type === "project"
-                                    ? "text-blue-600"
-                                    : "text-purple-600"
-                                }`}
-                              />
-                            ) : (
-                              <ListTodo className="w-4 h-4 text-purple-600" />
-                            )}
-                          </div>
-                          <div className="flex-1 text-left">
-                            <p className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
-                              {result.title}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {result.subtitle}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-
-                      <div className="px-4 py-2 border-t border-gray-100 mt-1">
-                        <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                          View all results →
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* No Results */}
-                {isSearchOpen && searchQuery && searchResults.length === 0 && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsSearchOpen(false)}
-                    />
-                    <div className="absolute top-full mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 py-8 z-20">
-                      <div className="text-center">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                          <Search className="w-6 h-6 text-gray-400" />
+            {/* Light Search Results Dropdown */}
+            {isSearchOpen && searchResults.length > 0 && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setIsSearchOpen(false)} />
+                <div className="absolute top-full mt-4 right-0 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 py-2 z-20 overflow-hidden">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {searchResults.length} Results
+                    </p>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => {
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        className="w-full flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition group text-left"
+                      >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${result.type === "project" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"}`}>
+                          {result.type === "project" ? <FolderKanban className="w-4 h-4" /> : <ListTodo className="w-4 h-4" />}
                         </div>
-                        <p className="text-sm font-medium text-gray-900">
-                          No results found
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Try searching with different keywords
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Theme Toggle */}
-              <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition hidden sm:block"
-              >
-                {isDarkMode ? (
-                  <Sun className="w-5 h-5 text-gray-600" />
-                ) : (
-                  <Moon className="w-5 h-5 text-gray-600" />
-                )}
-              </button>
-
-              {/* Notifications */}
-              <button className="relative p-2 rounded-lg hover:bg-gray-100 transition hidden sm:block">
-                <Bell className="w-5 h-5 text-gray-600" />
-                {notifications > 0 && (
-                  <span className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {notifications}
-                  </span>
-                )}
-              </button>
-
-              {/* Profile Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition"
-                >
-                  <div className="w-9 h-9 bg-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-semibold">SK</span>
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 hidden sm:block">
-                    Sarah Kumar
-                  </span>
-                </button>
-
-                {/* Dropdown Menu */}
-                {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        Sarah Kumar
-                      </p>
-                      <p className="text-xs text-gray-500">sarah@example.com</p>
-                    </div>
-                    <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                      <User className="w-4 h-4" />
-                      Profile
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                      <Settings className="w-4 h-4" />
-                      Settings
-                    </button>
-                    <div className="border-t border-gray-100 mt-2 pt-2">
-                      <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                        <LogOut className="w-4 h-4" />
-                        Logout
+                        <div>
+                          <p className="text-sm font-medium text-gray-800 group-hover:text-blue-600">{result.title}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{result.subtitle}</p>
+                        </div>
                       </button>
-                    </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              </>
+            )}
+          </div>
 
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6 text-gray-600" />
-                ) : (
-                  <Menu className="w-6 h-6 text-gray-600" />
-                )}
+          {/* Icon Buttons */}
+          <div className="hidden sm:flex items-center gap-1">
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all">
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button className="relative p-2 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-all">
+              <Bell className="w-5 h-5" />
+              {notifications > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-pink-500 rounded-full shadow-[0_0_8px_rgba(236,72,153,0.6)]" />
+              )}
+            </button>
+          </div>
+
+          {/* Profile Dropdown */}
+          <div className="relative hidden sm:block">
+            <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center border-2 border-white hover:scale-105 transition-transform shadow-[0_0_10px_rgba(139,92,246,0.3)]"
+            >
+              <span className="text-white text-sm font-semibold">SK</span>
+            </button>
+
+            {/* Light Profile Menu */}
+            {isProfileOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)} />
+                <div className="absolute right-0 mt-4 w-56 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 py-2 z-20 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-800">Sarah Kumar</p>
+                    <p className="text-xs text-gray-500">sarah@example.com</p>
+                  </div>
+                  <div className="py-1">
+                    <button onClick={() => navigate("/setting")} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition">
+                      <Settings className="w-4 h-4" /> Settings
+                    </button>
+                  </div>
+                  <div className="border-t border-gray-100 mt-1 pt-1">
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 transition">
+                      <LogOut className="w-4 h-4" /> Logout
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Glowing CTA Button */}
+          {/* <button className="hidden sm:block px-5 py-2 rounded-full font-bold text-sm text-white bg-gradient-to-r from-pink-400 to-orange-400 shadow-[0_4px_15px_rgba(244,114,182,0.4)] hover:shadow-[0_6px_20px_rgba(244,114,182,0.6)] hover:-translate-y-0.5 transition-all duration-300">
+            Get Started
+          </button> */}
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all"
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Dropdown (Light Glass) */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-2xl overflow-hidden pointer-events-auto z-40">
+          <div className="px-4 py-4 space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname.startsWith(item.path);
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    navigate(item.path);
+                    setActiveTab(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+            
+            <div className="pt-4 mt-2 border-t border-gray-100 flex flex-col gap-3">
+              {/* <button className="w-full py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-pink-400 to-orange-400 shadow-[0_4px_15px_rgba(244,114,182,0.3)]">
+                Get Started
+              </button> */}
+              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
               </button>
             </div>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-3 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition ${
-                      activeTab === item.id
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Mobile Search */}
-            <div className="px-4 pb-3">
-              <div className="relative">
-                <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search projects, tasks..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Mobile Search Results */}
-              {searchQuery && (
-                <div className="mt-2 bg-gray-50 rounded-lg p-2 max-h-64 overflow-y-auto">
-                  {searchResults.length > 0 ? (
-                    <>
-                      <p className="text-xs font-medium text-gray-500 px-2 py-1 uppercase">
-                        {searchResults.length} Results
-                      </p>
-                      {searchResults.map((result) => (
-                        <button
-                          key={result.id}
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="w-full flex items-start gap-3 px-2 py-2 hover:bg-white rounded-lg transition"
-                        >
-                          <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              result.type === "project"
-                                ? "bg-blue-100"
-                                : "bg-purple-100"
-                            }`}
-                          >
-                            {result.type === "project" ? (
-                              <FolderKanban className="w-4 h-4 text-blue-600" />
-                            ) : (
-                              <ListTodo className="w-4 h-4 text-purple-600" />
-                            )}
-                          </div>
-                          <div className="flex-1 text-left">
-                            <p className="text-sm font-medium text-gray-900">
-                              {result.title}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {result.subtitle}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="text-center py-6">
-                      <Search className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">No results found</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Page Content */}
-      <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === "dashboard" && <Dashboard />}
-        {activeTab === "projects" &&
-          (selectedProject ? (
-            <ProjectDetail
-              project={selectedProject}
-              onBack={() => setSelectedProject(null)}
-            />
-          ) : (
-            <Project onProjectClick={setSelectedProject} />
-          ))}
-        {activeTab === "tasks" && <Task />}
-      </main>
+      )}
     </div>
   );
 }
