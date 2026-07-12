@@ -58,10 +58,10 @@ export default function Navbar() {
 
   return (
     // Outer wrapper positions the floating pill
-    <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+    <div className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none">
       
       {/* Light Glassmorphic Navbar */}
-      <nav className="pointer-events-auto relative w-full max-w-6xl bg-white/80 backdrop-blur-xl border border-gray-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-full px-4 sm:px-6 py-2.5 flex items-center justify-between transition-all">
+      <nav className="pointer-events-auto relative w-full  bg-white/80 backdrop-blur-xl border border-gray-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] px-4 sm:px-6 py-2.5 flex items-center justify-between transition-all">
         
         {/* Left: Logo & Brand */}
         <div className="flex items-center gap-3 relative z-10">

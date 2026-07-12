@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/users/googleLogin",
-        { credential: response.credential },
+        { credential: response.credential },{ withCredentials: true }
       );
       sessionStorage.setItem("accessToken", res.data.token);
       navigate("/");
@@ -152,11 +152,9 @@ const Login = () => {
             </p>
           </div>
           <div className="googleSSO">
-            {/* <div id="google-signin" className="w-full bg-transparent border text-black py-5 flex gap-5 hover:bg-gray-200">
-              <GoogleSvg /> Continue with Google
-            </div> */}
+            
             <div id="google-signin"></div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>

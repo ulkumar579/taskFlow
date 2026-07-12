@@ -20,7 +20,7 @@ export default function Navbar({ dark, onToggleDark }) {
   const [searchVal, setSearchVal] = useState('');
 
   return (
-    <header className="navbar fixed top-0 left-0 right-0 z-50 h-[64px] flex items-center px-4 md:px-8 gap-4">
+    <header className="navbar fixed top-0 left-0 right-0 h-[64px] flex items-center px-4 md:px-8 gap-4">
       {/* Logo */}
       <div className="flex items-center gap-2 shrink-0">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-md">

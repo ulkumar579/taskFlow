@@ -326,7 +326,7 @@ const AssigneeMultiSelect = memo(function AssigneeMultiSelect({ selected, onTogg
   const [activeIdx, setActiveIdx] = useState(-1);
   const ref = useRef(null);
   const searchRef = useRef(null);
-
+  const { member: TEAM_MEMBERS } = useSelector((state) => state.member);
   const filtered = useMemo(
     () => TEAM_MEMBERS.filter((m) => m.name.toLowerCase().includes(query.toLowerCase()) || m.role.toLowerCase().includes(query.toLowerCase())),
     [query]
@@ -518,7 +518,7 @@ export default function AddTaskModal({ open, onClose, onCreate }) {
     setErrors({}); setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onCreate?.({ title: title.trim(), description: description.trim(), project, dueDate, priority, assignees, labels });
+      onCreate?.({ title: title.trim(), description: description.trim(), project, dueDate, priority, assigneeIds: assignees.map((member) => member.id), labels });
       handleClose();
     }, 1200);
   }, [title, description, project, dueDate, priority, assignees, labels, onCreate, handleClose]);

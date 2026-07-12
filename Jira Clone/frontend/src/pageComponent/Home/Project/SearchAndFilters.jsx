@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect, useRef } from 'react';
 import {
   Search, SlidersHorizontal, ArrowUpDown, ChevronDown,
   LayoutGrid, List, CalendarDays, X,
@@ -10,19 +10,47 @@ const CHIPS = [
   { id: 'high',     label: 'High Priority',   dot: true,     dotColor: '#ef4444' },
   { id: 'medium',   label: 'Medium Priority', dot: true,     dotColor: '#f97316' },
   { id: 'low',      label: 'Low Priority',    dot: true,     dotColor: '#22c55e' },
-  { id: 'archived', label: 'Archived',        dot: false,    dotColor: null, icon: 'archive' },
 ];
 
 const SORT_OPTIONS = ['Recent', 'Name A-Z', 'Progress', 'Due Date', 'Priority'];
 
 const SearchAndFilters = memo(function SearchAndFilters({
-  search, onSearch, activeFilter, onFilter, view, onView,
+  search, onSearch, activeFilter, onFilter, view, onView, sort, onSort,
 }) {
   const [sortOpen, setSortOpen] = useState(false);
-  const [sort, setSort] = useState('Recent');
   const [focused, setFocused] = useState(false);
+  const sortRef = useRef(null);
 
   const handleSearch = useCallback((e) => onSearch(e.target.value), [onSearch]);
+
+  useEffect(() => {
+    if (!sortOpen) return;
+
+    const handlePointerDown = (e) => {
+      if (sortRef.current && !sortRef.current.contains(e.target)) {
+        setSortOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSortOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [sortOpen]);
+
+  const handleSortSelect = useCallback((value) => {
+    setSortOpen(false);
+    onSort?.(value);
+  }, [onSort]);
 
   return (
     <div style={{ animation: 'fadeUp .6s cubic-bezier(.22,.61,.36,1) .1s both' }}>
@@ -50,13 +78,13 @@ const SearchAndFilters = memo(function SearchAndFilters({
         </div>
 
         {/* Filter button */}
-        <button className="flex items-center gap-2 h-11 px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-200 hover:shadow-md" style={{ color: 'var(--color-text)' }}>
+        {/* <button className="flex items-center gap-2 h-11 px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-200 hover:shadow-md" style={{ color: 'var(--color-text)' }}>
           <SlidersHorizontal size={15} className="text-gray-500" />
           Filter
-        </button>
+        </button> */}
 
         {/* Sort */}
-        <div className="relative">
+        <div className="relative" ref={sortRef}>
           <button
             onClick={() => setSortOpen((o) => !o)}
             className="flex items-center gap-2 h-11 px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-200 hover:shadow-md"
@@ -69,13 +97,13 @@ const SearchAndFilters = memo(function SearchAndFilters({
 
           {sortOpen && (
             <div
-              className="dropdown-menu absolute top-12 right-0 z-50 w-44 rounded-xl border border-[var(--color-border)] shadow-xl py-1.5 overflow-hidden"
+              className="dropdown-menu absolute right-0 top-full mt-2 z-[9999] w-44 rounded-xl border border-[var(--color-border)] shadow-xl py-1.5 overflow-hidden"
               style={{ background: 'var(--color-surface)' }}
             >
               {SORT_OPTIONS.map((opt) => (
                 <button
                   key={opt}
-                  onClick={() => { setSort(opt); setSortOpen(false); }}
+                  onClick={() => handleSortSelect(opt)}
                   className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5 ${sort === opt ? 'text-indigo-600 font-medium' : ''}`}
                   style={{ color: sort === opt ? undefined : 'var(--color-text)' }}
                 >

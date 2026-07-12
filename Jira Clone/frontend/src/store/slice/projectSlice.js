@@ -8,6 +8,7 @@ const projectSlice = createSlice({
     selectedProject: null,
     loading: false,
     error: null,
+    createProjectMode: "create", // "create" or "edit"
   },
   reducers: {
     setProjects: (state, action) => {
@@ -28,6 +29,9 @@ const projectSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setCreateProjectMode: (state, action) => {
+      state.createProjectMode = action.payload;
+    }
   },
 });
 
@@ -38,6 +42,7 @@ export const {
   clearSelectedProject,
   setLoading,
   setError,
+  setCreateProjectMode
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

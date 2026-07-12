@@ -5,13 +5,13 @@ import {
 } from 'lucide-react';
 
 /* ─── Filter button with dropdown ─── */
-function FilterBtn({ icon: Icon, label, options, value, onChange }) {
-  const [open, setOpen] = useState(false);
+function FilterBtn({ id, icon: Icon, label, options, value, onChange, isOpen, onToggle, onClose }) {
+  const open = isOpen(id);
 
   return (
-    <div className="relative">
+    <div className="relative z-[70]">
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => onToggle(id)}
         className="flex items-center gap-2 h-10 px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-indigo-300 hover:shadow-sm whitespace-nowrap"
         style={{ color: 'var(--color-text)' }}
       >
@@ -25,12 +25,12 @@ function FilterBtn({ icon: Icon, label, options, value, onChange }) {
 
       {open && (
         <div
-          className="filter-dropdown absolute top-12 left-0 z-50 w-40 rounded-xl border border-[var(--color-border)] shadow-xl py-1.5 overflow-hidden"
+          className="filter-dropdown absolute left-0 top-full mt-2 z-[9999] w-40 rounded-xl border border-[var(--color-border)] shadow-xl py-1.5 overflow-hidden"
           style={{ background: 'rgba(255,255,255,.96)' }}
         >
           {value && (
             <button
-              onClick={() => { onChange(''); setOpen(false); }}
+              onClick={() => { onChange(''); onClose(); }}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
             >
               <X size={12} /> Clear
@@ -39,8 +39,8 @@ function FilterBtn({ icon: Icon, label, options, value, onChange }) {
           {options.map((opt) => (
             <button
               key={opt}
-              onClick={() => { onChange(opt); setOpen(false); }}
-              className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-gray-50 ${value === opt ? 'text-indigo-600 font-semibold' : ''}`}
+              onClick={() => { onChange(opt); onClose(); }}
+              className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-gray-200 cursor-pointer ${value === opt ? 'text-indigo-600 font-semibold' : ''}`}
               style={{ color: value === opt ? undefined : 'var(--color-text)' }}
             >
               {opt}
@@ -57,7 +57,6 @@ function ViewToggle({ view, onView }) {
   const views = [
     { id: 'list',     icon: LayoutList,   title: 'List' },
     { id: 'board',    icon: LayoutGrid,   title: 'Board' },
-    { id: 'calendar', icon: CalendarRange, title: 'Calendar' },
   ];
 
   return (
@@ -78,6 +77,7 @@ function ViewToggle({ view, onView }) {
 
 const TaskFilters = memo(function TaskFilters({
   search, onSearch, filters, onFilter, sort, onSort, view, onView,
+  dropdown,
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -89,7 +89,7 @@ const TaskFilters = memo(function TaskFilters({
   const ASSIGNEE_OPTIONS = ['John', 'Sarah', 'Mike', 'Emma'];
 
   return (
-    <div style={{ animation: 'fadeUp .6s cubic-bezier(.22,.61,.36,1) .1s both' }}>
+    <div ref={dropdown.containerRef} style={{ animation: 'fadeUp .6s cubic-bezier(.22,.61,.36,1) .1s both' }}>
       <div className="flex flex-wrap gap-3 items-center mb-5">
         {/* Search */}
         <div
@@ -116,41 +116,61 @@ const TaskFilters = memo(function TaskFilters({
 
         {/* Filter dropdowns */}
         <FilterBtn
+          id="priority"
           icon={Flag}
           label="Priority"
           options={PRIORITY_OPTIONS}
           value={filters.priority}
           onChange={(v) => onFilter('priority', v)}
+          isOpen={dropdown.isOpen}
+          onToggle={dropdown.toggle}
+          onClose={dropdown.close}
         />
         <FilterBtn
+          id="status"
           icon={CircleDot}
           label="Status"
           options={STATUS_OPTIONS}
           value={filters.status}
           onChange={(v) => onFilter('status', v)}
+          isOpen={dropdown.isOpen}
+          onToggle={dropdown.toggle}
+          onClose={dropdown.close}
         />
         <FilterBtn
+          id="assignee"
           icon={User}
           label="Assignee"
           options={ASSIGNEE_OPTIONS}
           value={filters.assignee}
           onChange={(v) => onFilter('assignee', v)}
+          isOpen={dropdown.isOpen}
+          onToggle={dropdown.toggle}
+          onClose={dropdown.close}
         />
         <FilterBtn
+          id="dueDate"
           icon={CalendarDays}
           label="Due Date"
           options={['Today', 'This Week', 'This Month', 'Overdue']}
           value={filters.dueDate}
           onChange={(v) => onFilter('dueDate', v)}
+          isOpen={dropdown.isOpen}
+          onToggle={dropdown.toggle}
+          onClose={dropdown.close}
         />
 
         {/* Sort */}
         <FilterBtn
+          id="sort"
           icon={ArrowUpDown}
           label={`Sort: ${sort}`}
           options={SORT_OPTIONS}
           value={sort !== 'Newest' ? sort : ''}
           onChange={(v) => onSort(v || 'Newest')}
+          isOpen={dropdown.isOpen}
+          onToggle={dropdown.toggle}
+          onClose={dropdown.close}
         />
 
         {/* View toggle */}

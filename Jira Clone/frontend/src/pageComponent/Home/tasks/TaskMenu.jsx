@@ -1,4 +1,4 @@
-import { useEffect, useRef, memo } from 'react';
+import { memo } from 'react';
 import { Edit2, Eye, Pin, Link2, Archive, Trash2 } from 'lucide-react';
 
 const MENU_ITEMS = [
@@ -12,23 +12,13 @@ const MENU_ITEMS = [
 ];
 
 const TaskMenu = memo(function TaskMenu({ open, onClose, align = 'right' }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open, onClose]);
-
   if (!open) return null;
 
   return (
     <div
-      ref={ref}
       className="task-dropdown absolute z-50 w-48 rounded-2xl border border-[var(--color-border)] shadow-2xl py-1.5 overflow-hidden"
       style={{
-        background: 'rgba(255,255,255,.95)',
+        background: 'rgba(255,255,255,.96)',
         top: '100%',
         right: align === 'right' ? 0 : 'auto',
         left: align === 'left' ? 0 : 'auto',
@@ -48,7 +38,7 @@ const TaskMenu = memo(function TaskMenu({ open, onClose, align = 'right' }) {
             className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left transition-all duration-150
               ${item.danger
                 ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                : 'hover:bg-gray-200 cursor-pointer dark:hover:bg-white/5'
               }`}
             style={{ color: item.danger ? undefined : 'var(--color-text)' }}
           >

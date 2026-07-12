@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react';
+import { useCallback, memo } from 'react';
 import {
   MessageSquare, Paperclip, Clock, MoreHorizontal,
   Monitor, Code2, FileText, Rocket, BookOpen, Layers, Smartphone,
@@ -59,16 +59,16 @@ function DueDate({ label, state }) {
   );
 }
 
-const TaskRow = memo(function TaskRow({ task, delay = 0, onToggle }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+const TaskRow = memo(function TaskRow({ task, delay = 0, onToggle, dropdown, menuId }) {
   const pc = PRIORITY_CONFIG[task.priority];
   const IconComp = ICON_MAP[task.lucideIcon] || Monitor;
+  const menuOpen = dropdown.isOpen(menuId);
 
   const handleToggle = useCallback((checked) => onToggle(task.id, checked), [task.id, onToggle]);
 
   return (
     <div
-      className={`task-row task-enter flex items-center gap-3 md:gap-4 px-4 md:px-5 py-4 ${task.completed ? 'completed' : ''}`}
+      className={`task-row task-enter flex items-center gap-3 md:gap-4 px-4 md:px-5 py-4 ${task.completed ? 'completed' : ''} ${menuOpen ? 'menu-open' : ''}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Priority strip */}
@@ -144,11 +144,11 @@ const TaskRow = memo(function TaskRow({ task, delay = 0, onToggle }) {
       <div className="relative shrink-0">
         <button
           className="task-menu-btn w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-white/8 transition-colors"
-          onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}
+          onClick={(e) => { e.stopPropagation(); dropdown.toggle(menuId); }}
         >
           <MoreHorizontal size={15} style={{ color: 'var(--color-muted)' }} />
         </button>
-        <TaskMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+        <TaskMenu open={menuOpen} onClose={dropdown.close} />
       </div>
     </div>
   );

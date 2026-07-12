@@ -12,7 +12,7 @@ const StatusTabs = memo(function StatusTabs({ active, counts, onChange }) {
   return (
     <div
       className="flex items-center gap-1 border-b border-[var(--color-border)] mb-5 overflow-x-auto pb-0 scrollbar-hide"
-      style={{ animation: 'fadeIn .5s ease .2s both' }}
+      style={{ animation: 'fadeIn .5s ease .2s both',position : 'relative',zIndex : '-1'}}
     >
       {TABS.map((tab) => {
         const isActive = active === tab.id;
