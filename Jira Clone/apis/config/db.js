@@ -14,3 +14,20 @@ pool.on("connect", () => {
 });
 
 module.exports = pool;
+
+// config/db.js
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+// });
+
+// // Test connection
+// pool.on("connect", () => {
+//   console.log("✅ PostgreSQL connected");
+// });
+
+// pool.on("error", (err) => {
+//   console.error("❌ Unexpected error on idle client", err);
+//   process.exit(-1);
+// });
+
+// module.exports = pool;

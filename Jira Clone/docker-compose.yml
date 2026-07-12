@@ -1,0 +1,40 @@
+# jiraclone/docker-compose.yml
+
+version: "3.8"
+
+services:
+  # 1. The React Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80" # Maps local port 3000 to the container's Nginx port 80
+    depends_on:
+      - backend
+
+  # 2. The Node/Express Backend
+  backend:
+    build: ./apis
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      # Points directly to the local 'db' service created below
+      - DATABASE_URL=postgresql://task_user:TAG12345rag@db:5432/taskflow
+    depends_on:
+      - db
+
+  # 3. The Local PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=task_user
+      - POSTGRES_PASSWORD=TAG12345rag
+      - POSTGRES_DB=taskflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Saves your data so it isn't lost on restart
+
+# Creates a persistent storage volume for the database on your hard drive
+volumes:
+  pgdata:

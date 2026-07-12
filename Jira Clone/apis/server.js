@@ -21,8 +21,8 @@ app.use(
 // ✅ JSON middleware
 app.use(express.json());
 
-console.log("DB USER:", process.env.DB_USER);
-console.log("DB PASSWORD:", process.env.DB_PASSWORD);
+// console.log("DB USER:", process.env.DB_USER);
+// console.log("DB PASSWORD:", process.env.DB_PASSWORD);
 
 // ✅ Health check (Postgres test)
 // app.get("/health", async (req, res) => {

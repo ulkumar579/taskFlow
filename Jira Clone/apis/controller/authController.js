@@ -18,7 +18,7 @@ const login = async (req, res) => {
         message: "Invalid password or email",
       });
     }
-
+    console.log(email, password);
     const result = await pool.query(
       "select id,email,password_hash,full_name from users where email=$1",
       [email],
@@ -54,7 +54,7 @@ const login = async (req, res) => {
     if (error) {
       res.status(500).json({
         success: false,
-        message: "Internal server error",
+        message: "Internal server errorr",
       });
     }
   }
