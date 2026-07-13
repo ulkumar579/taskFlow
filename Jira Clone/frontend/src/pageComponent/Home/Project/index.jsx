@@ -6,7 +6,7 @@ import Pagination from "../project/Pagination";
 import ProjectsSidebar from "../project/ProjectsSidebar";
 import { useDropdown } from "../hooks/useDropdown";
 import { PROJECTS } from "./projects";
-import { setProjects } from "@/store/slice/projectSlice";
+import { setError, setProjects, setLoading as setLoadingProject } from "@/store/slice/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import api from "@/utils/api";
 import { setMember } from "@/store/slice/memberSlice";
@@ -49,6 +49,38 @@ export default function ProjectsPage() {
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, activeFilter, sortBy]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      // dispatch(setLoading(true));
+      try {
+        console.log("Fetching projects...");
+        const res = await api.get("/project/getProject");
+        dispatch(setProjects(res.data.data.resultset));
+      } catch (err) {
+        dispatch(setError(err.response?.data?.message || "Failed to fetch"));
+      } finally {
+        dispatch(setLoadingProject(false));
+      }
+    };
+
+    fetchProjects();
+
+    const fetchMembers = async () => {
+      try {
+        const res = await api.get("/members/getMember");
+        if (res.status === 200) {
+          const data = res.data.data.resultset ?? [];
+          dispatch(setMember(data));
+        }
+      } catch (err) {
+        console.error("Error fetching team members:", err);
+      }
+    };
+
+    fetchMembers();
+    // fetchTasks();
+  }, []);
 
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {

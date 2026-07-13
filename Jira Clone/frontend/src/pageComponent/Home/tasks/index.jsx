@@ -8,11 +8,19 @@ import { useDropdown } from "../hooks/useDropdown";
 import { TASKS } from "./tasksData";
 import AddTaskModal from "./AddTaskModal";
 import api from "@/utils/api";
-
-const PER_PAGE = 4;
+import {
+  setError,
+  setProjects,
+  setLoading as setLoadingProject,
+} from "@/store/slice/projectSlice";
+import { setMember } from "@/store/slice/memberSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setTasks as setTaskInStore } from "@/store/slice/taskSlice";
+const PER_PAGE = 6;
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState(TASKS);
+  const storedTask = useSelector((state) => state.tasks.items);
+  const [tasks, setTasks] = useState(storedTask ?? TASKS);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
@@ -28,18 +36,58 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const dropdown = useDropdown();
+  const dispatch = useDispatch();
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      const res = await api.get("/task/fetchTasks");
+      const taskList = res?.data?.data ?? [];
+      setTasks(taskList);
+      dispatch(setTaskInStore(taskList));
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+    }
+  }, []);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      // dispatch(setLoading(true));
+      try {
+        console.log("Fetching projects...");
+        const res = await api.get("/project/getProject");
+        dispatch(setProjects(res.data.data.resultset));
+      } catch (err) {
+        dispatch(setError(err.response?.data?.message || "Failed to fetch"));
+      } finally {
+        dispatch(setLoadingProject(false));
+      }
+    };
+
+    fetchProjects();
+
+    const fetchMembers = async () => {
+      try {
+        const res = await api.get("/members/getMember");
+        if (res.status === 200) {
+          const data = res.data.data.resultset ?? [];
+          dispatch(setMember(data));
+        }
+      } catch (err) {
+        console.error("Error fetching team members:", err);
+      }
+    };
+
+    fetchMembers();
+    fetchTasks();
+  }, []);
 
   const createTask = async (data) => {
-    const res = await api
-      .post("/task/createTask", data)
-      .then((res) => {
-        console.log("Task created:", res.data);
-        setTasks((prev) => [...prev, res.data]);
-      })
-      .catch((err) => {
-        console.error("Error creating task:", err);
-      });
-
+    try {
+      const res = await api.post("/task/createTask", data);
+      console.log("Task created:", res.data);
+      await fetchTasks();
+    } catch (err) {
+      console.error("Error creating task:", err);
+    }
   };
 
   /* Simulate load */

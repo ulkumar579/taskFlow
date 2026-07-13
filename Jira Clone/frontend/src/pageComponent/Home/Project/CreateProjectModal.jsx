@@ -236,7 +236,7 @@ const MemberMultiSelect = memo(function MemberMultiSelect({
   const containerRef = useRef(null);
   const searchRef = useRef(null);
 
-  const teamMembers = useSelector((state) => state.member);
+  const teamMembers = useSelector((state) => state.items);
 
   const filtered = useMemo(
     () =>

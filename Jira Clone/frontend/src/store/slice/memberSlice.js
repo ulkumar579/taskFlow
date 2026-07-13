@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const memberSlice = createSlice({
   name: "member",
   initialState: {
-    member: [],
+    items: [],
   },
   reducers: {
     setMember: (state, action) => {
-      state.member = action.payload;
+      state.items = action.payload;
     },
     clearMember: () => [],
   },

@@ -189,7 +189,7 @@ function CardMenu({
   onRequestDelete,
 }) {
   const projectStore = useSelector((state) => state.projects.items);
-  const memberStore = useSelector((state) => state.member);
+  const memberStore = useSelector((state) => state.items);
   const dispatch = useDispatch();
   const handleEditProject = (projectid) => {
     setModalOpen(true);
@@ -292,11 +292,11 @@ const ProjectCard = memo(function ProjectCard({
   const [deleting, setDeleting] = useState(false);
   const dispatch = useDispatch();
   const projectStore = useSelector((state) => state.projects.items);
-  const membersStore = useSelector((state) => state.member);
+  const membersStore = useSelector((state) => state.member.items);
   const avatars = useMemo(() => {
     if (!Array.isArray(project.avatars)) return [];
     return project.avatars.map((memberId) => {
-      const member = membersStore.find((m) => m.id === memberId);
+      const member = membersStore?.find((m) => m.id === memberId);
       return member ? member.avatar : userLogo;
     });
   }, [membersStore, project.avatars]);
