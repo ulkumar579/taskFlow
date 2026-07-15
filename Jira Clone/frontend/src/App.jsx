@@ -6,7 +6,7 @@ import Login from "./pageComponent/LoginComponent/Login";
 import { isAuthenticated } from "./utils/auth";
 import ProfileSettings from "./pageComponent/profileSetting";
 import Dashboard from "./pageComponent/Home/Dashboard";
-import Project from "./pageComponent/Home/ProjectsPage";
+// import Project from "./pageComponent/Home/project";
 import Tasks from "./pageComponent/Home/tasks";
 import ProjectDetailPage from "./pageComponent/Home/project/ProjectDetailPage";
 
@@ -24,7 +24,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/setting" element={<ProfileSettings />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/projects" element={<Project />} />
+          {/* <Route path="/projects" element={<Project />} /> */}
           <Route path="/projects/:id" element={<ProjectDetailPage />} />
           {/* ← dynamic route */}
           <Route path="/tasks" element={<Tasks />} />
