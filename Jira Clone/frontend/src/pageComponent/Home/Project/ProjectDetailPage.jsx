@@ -5,7 +5,6 @@ import {
   CalendarDays, Users, MoreHorizontal, Plus, Filter, Search,
   CheckCircle2, CircleDot, CircleDashed, Circle, TrendingUp,
 } from 'lucide-react';
-import { PROJECTS, PROJECT_TASKS } from './projects';
 import KanbanColumn from './kanban/KanbanColumn';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateTaskStatus } from '@/store/slice/taskSlice';
@@ -14,22 +13,22 @@ import api from '@/utils/api';
 const ICON_MAP = { Layers, Code2, Smartphone, Globe, BarChart3, Plug };
 
 const COLUMNS = [
-  { id: 'todo',        title: 'To Do',       color: '#6b7280' },
+  { id: 'todo', title: 'To Do', color: '#6b7280' },
   { id: 'in-progress', title: 'In Progress', color: '#3b82f6' },
-  { id: 'review',      title: 'Review',      color: '#8b5cf6' },
-  { id: 'completed',   title: 'Completed',   color: '#22c55e' },
+  { id: 'review', title: 'Review', color: '#8b5cf6' },
+  { id: 'completed', title: 'Completed', color: '#22c55e' },
 ];
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const projectStored = useSelector((state)=>state.projects.items)
+  const projectStored = useSelector((state) => state.projects.items)
   const tasksStored = useSelector((state) => state.tasks.items);
   const project = useMemo(() => projectStored.find((p) => p.id === id), [id]);
 
   const initialTasks = useMemo(
     () => {
-        return tasksStored.filter((t)=>t.project_id === id)
+      return tasksStored.filter((t) => t.project_id === id)
     },
     [id]
   );
@@ -66,20 +65,20 @@ export default function ProjectDetailPage() {
         )
       );
 
-      try{
+      try {
         const res = await api.put(`/task/${draggingId}`, {
           status: columnId,
           taskId: draggingId
         });
-        if(res.status === 200){
+        if (res.status === 200) {
           dispatch(updateTaskStatus({ taskId: draggingId, status: columnId }));
           toast.success('Task updated successfully');
         }
-        else{
+        else {
           toast.error('Failed to update task');
         }
       }
-      catch(error){
+      catch (error) {
         console.error(error);
       }
       setDraggingId(null);

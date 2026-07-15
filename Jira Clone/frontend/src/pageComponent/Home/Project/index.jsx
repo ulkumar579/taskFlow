@@ -5,7 +5,6 @@ import ProjectGrid from "../project/ProjectGrid";
 import Pagination from "../project/Pagination";
 import ProjectsSidebar from "../project/ProjectsSidebar";
 import { useDropdown } from "../hooks/useDropdown";
-import { PROJECTS } from "./projects";
 import { setError, setProjects, setLoading as setLoadingProject } from "@/store/slice/projectSlice";
 import { useDispatch, useSelector } from "react-redux";
 import api from "@/utils/api";
