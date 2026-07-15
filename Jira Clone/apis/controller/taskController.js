@@ -1,5 +1,27 @@
 const pool = require("../config/db");
 
+function getDueLabel(dueDateString) {
+  const dueDate = new Date(dueDateString);
+  const today = new Date();
+
+  // 1. Reset both dates to midnight (00:00:00) in the local timezone
+  // This ensures we compare full calendar days rather than exact 24-hour timestamps
+  today.setHours(0, 0, 0, 0);
+  const targetDate = new Date(dueDate);
+  targetDate.setHours(0, 0, 0, 0);
+
+  // 2. Calculate the difference in days
+  const diffTime = targetDate - today;
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  // 3. Use Intl.RelativeTimeFormat for automatic, localized formatting
+  // 'auto' turns -1, 0, 1 into "yesterday", "today", "tomorrow"
+  // 'always' would force "in 1 day", "in 0 days", "1 day ago"
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+  return rtf.format(diffDays, 'day');
+}
+
 const normalizeTaskForClient = (task) => {
   const project = task.project && typeof task.project === "object" ? task.project : null;
   const projectName = project?.name || task.project_name || "Project";
@@ -26,14 +48,14 @@ const normalizeTaskForClient = (task) => {
     : !dueDate
       ? "future"
       : (() => {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const due = new Date(dueDate);
-          due.setHours(0, 0, 0, 0);
-          if (due < today) return "overdue";
-          if (due.getTime() === today.getTime()) return "today";
-          return "future";
-        })();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const due = new Date(dueDate);
+        due.setHours(0, 0, 0, 0);
+        if (due < today) return "overdue";
+        if (due.getTime() === today.getTime()) return "today";
+        return "future";
+      })();
 
   return {
     id: task.id,
@@ -42,19 +64,11 @@ const normalizeTaskForClient = (task) => {
     priority: task.priority || "medium",
     status,
     project: projectName,
+    project_id: project?.id,
     projectColor,
     projectBg,
     dueDate: dueDate ?? "",
-    dueDateLabel:
-      status === "completed"
-        ? "Completed"
-        : dueDateState === "overdue"
-          ? "Overdue"
-          : dueDateState === "today"
-            ? "Today"
-            : dueDate
-              ? "Scheduled"
-              : "No due date",
+    dueDateLabel: getDueLabel(dueDate),
     dueDateState,
     comments: task.comments || 0,
     attachments: task.attachments || 0,
@@ -65,6 +79,8 @@ const normalizeTaskForClient = (task) => {
     iconColor,
     avatars: task.avatars || [],
     extra: task.extra || 0,
+    tags: task?.labels || [],
+    assigned_to: task.assigned_to || []
   };
 };
 
@@ -152,4 +168,23 @@ const fetchTasks = async (req, res) => {
   }
 };
 
-module.exports = { createTask, fetchTasks };
+const updateTaskStatus = async (req, res) => {
+  try {
+    const { taskId, status } = req.body;
+    const result = await pool.query(`UPDATE tasks SET status = $1 WHERE id = $2 Returning *`  , [status, taskId]);
+    return res.status(200).json({
+      success: true,
+      message: "Task status updated successfully",
+      data: result.rows[0],
+    });
+  }
+  catch (err) {
+    console.error("Update task status error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { createTask, fetchTasks, updateTaskStatus };

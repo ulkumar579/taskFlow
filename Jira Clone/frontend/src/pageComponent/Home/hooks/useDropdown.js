@@ -8,6 +8,15 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 export function useDropdown() {
   const [openId, setOpenId] = useState(null);
   const containerRef = useRef(null);
+  const containersRef = useRef(new Map());
+
+  const registerContainer = useCallback((id, el) => {
+    if (el) {
+      containersRef.current.set(id, el);
+    } else {
+      containersRef.current.delete(id);
+    }
+  }, []);
 
   const toggle = useCallback((id) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -20,7 +29,9 @@ export function useDropdown() {
   useEffect(() => {
     if (openId === null) return;
     const onMouseDown = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
+      const container =
+        containersRef.current.get(openId) ?? containerRef.current;
+      if (container && !container.contains(e.target)) {
         setOpenId(null);
       }
     };
@@ -35,5 +46,5 @@ export function useDropdown() {
     };
   }, [openId]);
 
-  return { openId, toggle, close, isOpen, containerRef };
+  return { openId, toggle, close, isOpen, containerRef, registerContainer };
 }

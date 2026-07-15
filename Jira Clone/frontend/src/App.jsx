@@ -7,10 +7,10 @@ import { isAuthenticated } from "./utils/auth";
 import Home from "./pageComponent/Home";
 import ProfileSettings from "./pageComponent/profileSetting";
 import Dashboard from "./pageComponent/Home/Dashboard";
-import ProjectDetailPage from "./pageComponent/Home/Project1/ProjectDetail";
 import Task from "./pageComponent/Home/Task";
 import Project from "./pageComponent/Home/project";
 import Tasks from "./pageComponent/Home/tasks";
+import ProjectDetailPage from "./pageComponent/Home/project/ProjectDetailPage";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
           <Route path="/setting" element={<ProfileSettings />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Project />} />
-          <Route path="/projects/:id/" element={<ProjectDetailPage />} />{" "}
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
           {/* ← dynamic route */}
           <Route path="/tasks" element={<Tasks />} />
         </Route>

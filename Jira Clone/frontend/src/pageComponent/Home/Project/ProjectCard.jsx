@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo, useMemo } from "react";
+import { useState, useRef, useEffect, memo, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import {
   MoreHorizontal,
@@ -21,6 +21,7 @@ import userLogo from "../../../assets/user.gif";
 import { useDispatch, useSelector } from "react-redux";
 import { setCreateProjectMode, setProjects } from "@/store/slice/projectSlice";
 import api from "@/utils/api";
+import { useNavigate } from "react-router-dom";
 const ICON_MAP = { Layers, Code2, Smartphone, Globe, BarChart3, Plug };
 
 /* ─── Animated progress ─── */
@@ -189,7 +190,7 @@ function CardMenu({
   onRequestDelete,
 }) {
   const projectStore = useSelector((state) => state.projects.items);
-  const memberStore = useSelector((state) => state.items);
+  const memberStore = useSelector((state) => state.member.items);
   const dispatch = useDispatch();
   const handleEditProject = (projectid) => {
     setModalOpen(true);
@@ -246,7 +247,8 @@ function CardMenu({
           key={label}
           className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm text-left cursor-pointer transition-colors ${danger ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" : "hover:bg-gray-50 dark:hover:bg-white/5"}`}
           style={{ color: danger ? undefined : "var(--color-text)" }}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             runCallbackFunctionOfOnclick(projectid, onClick);
             onClose();
           }}
@@ -265,8 +267,6 @@ function Deco({ className, style }) {
 }
 
 const ProjectCard = memo(function ProjectCard({
-  key,
-  projectid,
   project,
   delay = 0,
   dropdown,
@@ -284,15 +284,21 @@ const ProjectCard = memo(function ProjectCard({
   editingProjectId,
   setEditingProjectId,
 }) {
+  const navigate = useNavigate();
   const pc = PRIORITY_COLORS[project.priority];
   const IconComp = ICON_MAP[project.lucideIcon] || Layers;
   const menuOpen = dropdown.isOpen(menuId);
+  const menuContainerRef = useCallback(
+    (el) => dropdown.registerContainer(menuId, el),
+    [dropdown, menuId],
+  );
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [pendingDeleteProjectId, setPendingDeleteProjectId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const dispatch = useDispatch();
   const projectStore = useSelector((state) => state.projects.items);
   const membersStore = useSelector((state) => state.member.items);
+  const handleCardClick = () => navigate(`/projects/${project.id}`);
   const avatars = useMemo(() => {
     if (!Array.isArray(project.avatars)) return [];
     return project.avatars.map((memberId) => {
@@ -342,6 +348,7 @@ const ProjectCard = memo(function ProjectCard({
         "--card-border-color": `${project.borderColor}40`,
         "--card-shadow-color": `${project.borderColor}30`,
       }}
+      onClick={handleCardClick}
     >
       {/* Decorative dots */}
       <Deco
@@ -373,7 +380,7 @@ const ProjectCard = memo(function ProjectCard({
               {pc.label}
             </span>
           </div>
-          <div className="relative" ref={dropdown.containerRef}>
+          <div className="relative" ref={menuContainerRef}>
             <button
               className="card-menu-btn w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-white/8 transition-colors"
               onClick={(e) => {
@@ -387,7 +394,7 @@ const ProjectCard = memo(function ProjectCard({
               />
             </button>
             <CardMenu
-              projectid={projectid}
+              projectid={project.id}
               open={menuOpen}
               onClose={dropdown.close}
               modalOpen={modalOpen}

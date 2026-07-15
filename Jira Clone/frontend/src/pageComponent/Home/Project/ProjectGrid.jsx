@@ -55,6 +55,8 @@ const ProjectGrid = memo(function ProjectGrid({
             setDescription={setDescription}
             setColor={setColor}
             setMembers={setMembers}
+            editingProjectId={editingProjectId}
+            setEditingProjectId={setEditingProjectId}
           />
         ))}
       </div>
@@ -66,7 +68,6 @@ const ProjectGrid = memo(function ProjectGrid({
       {projects.map((p, i) => (
         <ProjectCard
           key={p.id}
-          projectid={p.id}
           project={p}
           delay={i * 80}
           dropdown={dropdown}

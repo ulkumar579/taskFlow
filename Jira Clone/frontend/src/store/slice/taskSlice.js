@@ -10,9 +10,16 @@ const taskSlice = createSlice({
     setTasks: (state, action) => {
       state.items = action.payload;
     },
+    updateTaskStatus: (state, action) => {
+      const { taskId, status } = action.payload;
+      const index = state.items.findIndex((task) => task.id === taskId);
+      if(index !== -1){
+        state.items[index].status = status;
+      }
+    },
   },
 });
 
-export const { setTasks } = taskSlice.actions;
+export const { setTasks, updateTaskStatus } = taskSlice.actions;
 
 export default taskSlice.reducer;
