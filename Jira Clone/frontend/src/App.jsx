@@ -6,7 +6,7 @@ import Login from "./pageComponent/LoginComponent/Login";
 import { isAuthenticated } from "./utils/auth";
 import ProfileSettings from "./pageComponent/profileSetting";
 import Dashboard from "./pageComponent/Home/Dashboard";
-import Project from "./pageComponent/Home/project";
+import Project from "./pageComponent/Home/ProjectsPage";
 import Tasks from "./pageComponent/Home/tasks";
 import ProjectDetailPage from "./pageComponent/Home/project/ProjectDetailPage";
 
